@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEO TICKET · Discord система заявок</title>
+    
+    <!-- Шрифты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Иконки -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Анимированный фон -->
+    <div class="gradient-bg">
+        <div class="gradient-sphere"></div>
+        <div class="gradient-sphere"></div>
+        <div class="gradient-sphere"></div>
+    </div>
+
+    <!-- Шумовая текстура -->
+    <div class="noise"></div>
+
+    <div class="container">
+        <!-- Навигация -->
+        <nav class="navbar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fab fa-discord"></i>
+                </div>
+                <span class="logo-text">NEO <span class="accent">TICKET</span></span>
+            </div>
+            
+            <div class="nav-actions">
+                <button id="loginBtn" class="btn btn-primary">
+                    <i class="fab fa-discord"></i>
+                    <span>Войти через Discord</span>
+                </button>
+                
+                <div id="userInfo" class="user-profile hidden">
+                    <div class="user-avatar">
+                        <img id="userAvatar" src="" alt="Avatar">
+                        <div class="status-dot"></div>
+                    </div>
+                    <span id="userName" class="user-name"></span>
+                    <button id="logoutBtn" class="btn btn-icon" title="Выйти">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Основной контент -->
+        <main>
+            <!-- Hero секция (для неавторизованных) -->
+            <section id="heroSection" class="hero">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        Управляй заявками
+                        <span class="gradient-text">проще чем когда-либо</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Современная система тикетов с интеграцией Discord. 
+                        Создавай заявки, отслеживай статус и получай обратную связь.
+                    </p>
+                    <button id="heroLoginBtn" class="btn btn-primary btn-large">
+                        <i class="fab fa-discord"></i>
+                        Начать работу
+                    </button>
+                </div>
+                <div class="hero-visual">
+                    <div class="floating-card">
+                        <i class="fas fa-ticket-alt"></i>
+                        <span>Новая заявка</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Дашборд (для авторизованных) -->
+            <div id="dashboard" class="dashboard hidden">
+                <!-- Статистика -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-ticket-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Всего заявок</span>
+                            <span class="stat-value" id="totalTickets">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon pending">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">В ожидании</span>
+                            <span class="stat-value" id="pendingTickets">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon active">
+                            <i class="fas fa-spinner"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">В работе</span>
+                            <span class="stat-value" id="inProgressTickets">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon completed">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Завершено</span>
+                            <span class="stat-value" id="completedTickets">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Создание заявки -->
+                <div class="card create-ticket">
+                    <div class="card-header">
+                        <h2>Создать заявку</h2>
+                        <p>Опишите вашу проблему, и мы поможем вам</p>
+                    </div>
+                    
+                    <form id="ticketForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="ticketTitle">
+                                    <i class="fas fa-heading"></i>
+                                    Тема заявки
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="ticketTitle" 
+                                    placeholder="Например: Проблема с доступом"
+                                    required
+                                >
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="ticketPriority">
+                                    <i class="fas fa-flag"></i>
+                                    Приоритет
+                                </label>
+                                <select id="ticketPriority">
+                                    <option value="low">🟢 Низкий</option>
+                                    <option value="medium" selected>🟡 Средний</option>
+                                    <option value="high">🔴 Высокий</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="ticketDescription">
+                                <i class="fas fa-align-left"></i>
+                                Описание
+                            </label>
+                            <textarea 
+                                id="ticketDescription" 
+                                placeholder="Подробно опишите вашу проблему..."
+                                rows="5"
+                                required
+                            ></textarea>
+                            <div class="textarea-hint">
+                                <i class="fas fa-info-circle"></i>
+                                Старайтесь описывать проблему максимально подробно
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-submit">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>Отправить заявку</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Список заявок (для модераторов) -->
+                <div id="moderatorPanel" class="moderator-panel hidden">
+                    <div class="panel-header">
+                        <h2>Управление заявками</h2>
+                        <div class="filter-tabs">
+                            <button class="filter-tab active" data-filter="all">
+                                <span>Все</span>
+                                <span class="filter-count" id="allCount">0</span>
+                            </button>
+                            <button class="filter-tab" data-filter="pending">
+                                <span>Ожидают</span>
+                                <span class="filter-count" id="pendingCount">0</span>
+                            </button>
+                            <button class="filter-tab" data-filter="in-progress">
+                                <span>В работе</span>
+                                <span class="filter-count" id="progressCount">0</span>
+                            </button>
+                            <button class="filter-tab" data-filter="completed">
+                                <span>Завершены</span>
+                                <span class="filter-count" id="completedCount">0</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="ticketsList" class="tickets-grid">
+                        <!-- Заявки будут загружаться сюда -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Модальное окно заявки -->
+    <div id="ticketModal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <button class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="modal-header">
+                <div class="modal-title">
+                    <h3 id="modalTicketTitle">Заявка</h3>
+                    <div class="modal-badges">
+                        <span id="modalTicketStatus" class="badge"></span>
+                        <span id="modalTicketPriority" class="badge"></span>
+                    </div>
+                </div>
+                <div class="modal-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span id="modalTicketAuthor"></span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span id="modalTicketDate"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-body">
+                <div class="modal-section">
+                    <h4>Описание</h4>
+                    <p id="modalTicketDescription" class="description-text"></p>
+                </div>
+            </div>
+            
+            <div id="modalActions" class="modal-footer">
+                <!-- Действия будут загружаться сюда -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомления -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Скрипты -->
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
